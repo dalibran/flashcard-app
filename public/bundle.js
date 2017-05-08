@@ -26,6 +26,26 @@ var store = Redux.createStore(Redux.combineReducers({
   cards: cards
 }));
 
+var App = function App(props) {
+  return React.createElement(
+    'div',
+    { className: 'app' },
+    props.children
+  );
+};
+
+ReactDOM.render(React.createElement(
+  App,
+  null,
+  ' Hello ',
+  React.createElement(
+    'strong',
+    null,
+    'React'
+  ),
+  ' '
+), document.getElementById('root'));
+
 store.subscribe(function () {
   console.log(store.getState());
 });

@@ -24,6 +24,14 @@ const store = Redux.createStore(Redux.combineReducers({
   cards
 }));
 
+const App = (props) => {
+  return(<div className='app'>
+      { props.children }
+    </div>);
+}
+
+ReactDOM.render(<App> Hello <strong>React</strong> </App>, document.getElementById('root'));
+
 store.subscribe(() => {
   console.log(store.getState());
 });
