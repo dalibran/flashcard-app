@@ -1,19 +1,28 @@
-const store = Redux.createStore(function (state, action) {
+//
+// {
+//   cards: [{ deckId: 123 }],
+//   decks: [{ }]
+// }
+//
 
-  switch (action.type) {
+const cards = (state, action) => {
+   switch (action.type) {
     case 'ADD_CARD':
       let newCard = Object.assign({}, action.data, {
         score: 1,
         id: +new Date
       });
 
-      return Object.assign({}, state, {
-        cards: state.cards ? state.cards.concat([newCard]) : [newCard]
-      });
+      return state.concat([newCard]);
     default:
-      return state || {};
+      return state || [];
   }
-});
+};
+
+
+const store = Redux.createStore(Redux.combineReducers({
+  cards
+}));
 
 store.subscribe(() => {
   console.log(store.getState());
