@@ -1,10 +1,10 @@
-//
-// {
-//   cards: [{ deckId: 123 }],
-//   decks: [{ }]
-// }
-//
+// action creators
+const addDeck = name => ({ type: 'ADD_DECK', data: name });
+const showAddDeck = () => ({ type: 'SHOW_ADD_DECK' });
+const hideAddDeck = () => ({ type: 'HIDE_ADD_DECK' });
 
+
+//reducers
 const cards = (state, action) => {
    switch (action.type) {
     case 'ADD_CARD':
@@ -19,8 +19,30 @@ const cards = (state, action) => {
   }
 };
 
+const decks = (state, action) => {
+  switch (action.type) {
+    case 'ADD_DECK':
+      let newDeck = { name: action.data, id: +new Date() };
+      return state.concat([newDeck]);
+    default:
+      return state || [];
+  }
+};
+
+const addingDeck = (state, action) => {
+  switch (action.type) {
+    case 'SHOW_ADD_DECK': return true;
+    case 'HIDE_ADD_DECK': return false;
+    default: return !!state;
+  }
+};
+
+
+//combine reducers
 const store = Redux.createStore(Redux.combineReducers({
-  cards
+  cards,
+  decks,
+  addingDeck
 }));
 
 store.subscribe(() => {
@@ -40,12 +62,14 @@ store.dispatch({
   data: {}
 });
 
+
 //app component
 const App = (props) => {
-  return(<div className='app'>
+  return (<div className='app'>
       { props.children }
     </div>);
 };
+
 
 //sidebar component
 const Sidebar = React.createClass({
@@ -64,9 +88,26 @@ const Sidebar = React.createClass({
   }
 });
 
-//render components
-ReactDOM.render((<App>
-  <Sidebar decks={[ { name: 'Deck 1' } ]} addingDeck={true} />
+
+//create function to render components
+function run() {
+  let state = store.getState();
+  console.log(state);
+  ReactDOM.render((<App>
+  <Sidebar decks={state.decks} addingDeck={state.addingDeck} />
  </App>), document.getElementById('root'));
+}
 
 
+// renders components
+run();
+
+
+// listens for updates and re-renders components if true
+store.subscribe(run);
+
+
+//global functions for testing
+window.show = () => store.dispatch(showAddDeck());
+window.hide = () => store.dispatch(hideAddDeck());
+window.add = () => store.dispatch(addDeck(new Date().toString()));
